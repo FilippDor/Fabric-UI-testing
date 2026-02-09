@@ -50,6 +50,7 @@ def pytest_sessionfinish(session, exitstatus):
     }
 
     final_json = TEST_RESULTS_DIR / "all_reports_results.json"
+    final_json.parent.mkdir(parents=True, exist_ok=True)
     final_json.write_text(json.dumps(final_output, indent=2), encoding="utf-8")
 
     log_to_console(f"[INFO] Final aggregated JSON: {final_json}", True)

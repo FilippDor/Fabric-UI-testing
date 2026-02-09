@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 import requests
@@ -20,9 +21,12 @@ class TestSettings:
 class ReportEmbedInfo:
     report_id: str
     workspace_id: str
+    dataset_id: Optional[str] = None
     page_id: Optional[str] = None
     role: Optional[str] = None
     bookmark_id: Optional[str] = None
+    is_effective_identity_required: bool = False
+    is_effective_identity_roles_required: bool = False
 
 
 @dataclass
@@ -77,14 +81,21 @@ def get_report_embed_token(
         "accessLevel": "View"
     }
 
-    if report_info.role:
-        body["identities"] = [
-            {
-                "username": report_info.role,
-                "roles": [report_info.role],
-                "datasets": []
-            }
-        ]
+    # Build effective identity only when required by the dataset (DirectQuery/live connection with RLS)
+    if report_info.is_effective_identity_required and report_info.dataset_id:
+        # Priority: explicit role per report > DEFAULT_RLS_ROLE env var
+        role = report_info.role
+        if not role:
+            role = os.environ.get("DEFAULT_RLS_ROLE")
+
+        identity: Dict[str, Any] = {
+            "username": "TestUser",
+            "datasets": [report_info.dataset_id],
+        }
+        if report_info.is_effective_identity_roles_required and role:
+            identity["roles"] = [role]
+
+        body["identities"] = [identity]
 
     headers = {
         "Content-Type": "application/json",
@@ -92,7 +103,11 @@ def get_report_embed_token(
     }
 
     response = requests.post(url, json=body, headers=headers)
-    response.raise_for_status()
+    if not response.ok:
+        raise RuntimeError(
+            f"GenerateToken failed ({response.status_code}) for report "
+            f"{report_info.report_id}: {response.text}"
+        )
 
     json_data = response.json()
     token = json_data.get("token")
@@ -122,9 +137,12 @@ def create_report_embed_info(report: Dict[str, Any]) -> ReportEmbedInfo:
     return ReportEmbedInfo(
         report_id=report["Id"],
         workspace_id=report["WorkspaceId"],
+        dataset_id=report.get("DatasetId"),
         page_id=pages[0] if pages else None,
         role=report.get("Role"),
         bookmark_id=report.get("BookmarkId"),
+        is_effective_identity_required=report.get("IsEffectiveIdentityRequired", False),
+        is_effective_identity_roles_required=report.get("IsEffectiveIdentityRolesRequired", False),
     )
 
 

@@ -45,6 +45,7 @@ jobs:
           SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
           WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+          DEFAULT_RLS_ROLE: ${{ secrets.DEFAULT_RLS_ROLE }}
         run: pytest --tb=short -v
 
       - name: Upload test results

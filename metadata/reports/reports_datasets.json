@@ -1,31 +1,31 @@
 {
-  "workspaceId": "4313e476-770a-4296-8964-0c3de75d82ed",
-  "generatedAtUtc": "2026-02-06T15:13:37+00:00Z",
-  "reportCount": 3,
+  "workspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+  "generatedAtUtc": "2026-02-09T21:27:29+00:00Z",
+  "reportCount": 2,
   "reports": [
     {
-      "Id": "802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3",
-      "Name": "RFP Analytics",
-      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3",
-      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
-      "DatasetId": "5cb3abc6-724c-4248-82d1-21ee28f03083",
-      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
+      "Id": "009214c6-654c-42a7-aa8a-3289128d0e59",
+      "Name": "TransactionLog_Final",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/009214c6-654c-42a7-aa8a-3289128d0e59",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=009214c6-654c-42a7-aa8a-3289128d0e59&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "30a9e7de-ea77-4093-a51c-c7e98b111a04",
+      "DatasetName": "TransactionLog_Final",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": true,
+      "IsEffectiveIdentityRolesRequired": true,
+      "Roles": []
     },
     {
-      "Id": "9b1c51f0-064e-4ff2-a397-b91cbdd7b41f",
-      "Name": "Demand Generation (1)",
-      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/9b1c51f0-064e-4ff2-a397-b91cbdd7b41f",
-      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=9b1c51f0-064e-4ff2-a397-b91cbdd7b41f&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
-      "DatasetId": "7a55c054-257d-433f-a685-0aa3afefe56c",
-      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
-    },
-    {
-      "Id": "f3fa8e1e-6c6f-4966-88c2-f5a981a2010d",
-      "Name": "Sales Analytics",
-      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/f3fa8e1e-6c6f-4966-88c2-f5a981a2010d",
-      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=f3fa8e1e-6c6f-4966-88c2-f5a981a2010d&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
-      "DatasetId": "fcaad20c-bae5-4d9b-81de-fb1922522b33",
-      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
+      "Id": "b0df05af-1b3e-43b3-a187-efde0274fd3e",
+      "Name": "Corporate Spend",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/b0df05af-1b3e-43b3-a187-efde0274fd3e",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=b0df05af-1b3e-43b3-a187-efde0274fd3e&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "dceed2c9-7442-4427-aa26-4b4e390f8ed8",
+      "DatasetName": "Corporate Spend",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": false,
+      "IsEffectiveIdentityRolesRequired": false,
+      "Roles": []
     }
   ]
 }

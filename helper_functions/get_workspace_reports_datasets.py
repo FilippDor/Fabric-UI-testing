@@ -9,7 +9,7 @@ from log_utils import log_to_console
 from dotenv import load_dotenv
 
 
-load_dotenv('.env')
+load_dotenv(".env")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -----------------------------
@@ -26,7 +26,8 @@ OUTPUT_FILE = BASE_DIR / "metadata" / "reports" / "reports_datasets.json"
 # Validation
 # -----------------------------
 missing = [
-    name for name, value in {
+    name
+    for name, value in {
         "SP_CLIENT_ID": APP_ID,
         "SP_TENANT_ID": TENANT_ID,
         "SP_CLIENT_SECRET": CLIENT_SECRET,
@@ -36,7 +37,10 @@ missing = [
 ]
 
 if missing:
-    print(f"ERROR: Missing required environment variables: {', '.join(missing)}", file=sys.stderr)
+    print(
+        f"ERROR: Missing required environment variables: {', '.join(missing)}",
+        file=sys.stderr,
+    )
     sys.exit(2)
 
 # -----------------------------
@@ -96,23 +100,56 @@ reports_raw = resp.json().get("value", [])
 reports_raw.sort(key=lambda r: r["id"])
 
 # -----------------------------
+# Fetch dataset details (including RLS roles)
+# -----------------------------
+dataset_ids = {r.get("datasetId") for r in reports_raw if r.get("datasetId")}
+dataset_metadata = {}
+
+for ds_id in dataset_ids:
+    try:
+        ds_url = f"{PBI_API}/v1.0/myorg/groups/{WORKSPACE_ID}/datasets/{ds_id}"
+        ds_resp = requests.get(ds_url, headers=headers, timeout=30)
+        if ds_resp.ok:
+            ds_data = ds_resp.json()
+            ds_name = ds_data.get("name", "")
+            is_effective_identity_required = ds_data.get("isEffectiveIdentityRequired", False)
+            is_effective_identity_roles_required = ds_data.get("isEffectiveIdentityRolesRequired", False)
+
+            dataset_metadata[ds_id] = {
+                "name": ds_name,
+                "isEffectiveIdentityRequired": is_effective_identity_required,
+                "isEffectiveIdentityRolesRequired": is_effective_identity_roles_required,
+            }
+            print(f"  Dataset {ds_id} ({ds_name}): effectiveIdentityRequired={is_effective_identity_required}, rolesRequired={is_effective_identity_roles_required}")
+    except Exception as e:
+        print(f"  WARN: Could not fetch dataset {ds_id}: {e}", file=sys.stderr)
+
+# -----------------------------
 # Build payload
 # -----------------------------
+report_list = []
+for r in reports_raw:
+    ds_id = r.get("datasetId")
+    ds_info = dataset_metadata.get(ds_id, {})
+    report_entry = {
+        "Id": r["id"],
+        "Name": r["name"],
+        "WebUrl": r.get("webUrl"),
+        "EmbedUrl": r.get("embedUrl"),
+        "DatasetId": ds_id,
+        "DatasetName": ds_info.get("name", ""),
+        "WorkspaceId": WORKSPACE_ID,
+        "IsEffectiveIdentityRequired": ds_info.get("isEffectiveIdentityRequired", False),
+        "IsEffectiveIdentityRolesRequired": ds_info.get("isEffectiveIdentityRolesRequired", False),
+    }
+    report_list.append(report_entry)
+
 payload = {
     "workspaceId": WORKSPACE_ID,
-    "generatedAtUtc": datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z",
-    "reportCount": len(reports_raw),
-    "reports": [
-        {
-            "Id": r["id"],
-            "Name": r["name"],
-            "WebUrl": r.get("webUrl"),
-            "EmbedUrl": r.get("embedUrl"),
-            "DatasetId": r.get("datasetId"),
-            "WorkspaceId": WORKSPACE_ID
-        }
-        for r in reports_raw
-    ],
+    "generatedAtUtc": datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    + "Z",
+    "reportCount": len(report_list),
+    "reports": report_list,
 }
 
 # -----------------------------
