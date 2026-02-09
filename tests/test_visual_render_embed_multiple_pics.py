@@ -187,6 +187,7 @@ def test_pbi_rendering_validation(page: Page, access_token: str, report: dict):
             """,
             page_name
         )
+        page.wait_for_timeout(800)  # allow visuals to finish rendering
         screenshot_path = TEST_RESULTS_DIR / f"{page_name}_{worker_id}.png"
         page.locator("#powerbi-container").screenshot(path=str(screenshot_path))
         log_to_console(f"[INFO] Screenshot saved: {screenshot_path}", False)

@@ -125,6 +125,19 @@ This means you can test a workspace with a mix of RLS and non-RLS reports withou
 
 ---
 
+## Failed Page Screenshots
+
+When a visual rendering error is detected on a page, the framework automatically:
+
+1. **Navigates back** to the failed page in the embedded report
+2. **Captures a full screenshot** of the Power BI container showing the broken state
+3. **Saves the screenshot** to `tests/test-results/{page_name}_{worker_id}.png`
+4. **Uploads all screenshots** as GitHub Actions artifacts for review
+
+This gives you visual evidence of exactly what went wrong — no need to manually reproduce the issue. Screenshots are only taken for failed pages to keep artifacts small.
+
+---
+
 ## What Gets Tested
 
 For each report in the workspace:
@@ -136,6 +149,7 @@ For each report in the workspace:
 | Embed token generation | Per-report embed tokens via REST API |
 | Visual rendering | Every page rendered in headless browser |
 | Error detection | Power BI SDK visual errors captured |
+| Failed page screenshots | Automatic screenshot capture of broken pages |
 | Performance metrics | Render time per page recorded |
 
 ---
