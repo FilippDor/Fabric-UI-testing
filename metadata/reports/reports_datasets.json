@@ -1,0 +1,31 @@
+{
+  "workspaceId": "4313e476-770a-4296-8964-0c3de75d82ed",
+  "generatedAtUtc": "2026-02-06T15:13:37+00:00Z",
+  "reportCount": 3,
+  "reports": [
+    {
+      "Id": "802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3",
+      "Name": "RFP Analytics",
+      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=802cf6d9-c6d2-4b37-8ab2-cdb32b34dff3&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "5cb3abc6-724c-4248-82d1-21ee28f03083",
+      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
+    },
+    {
+      "Id": "9b1c51f0-064e-4ff2-a397-b91cbdd7b41f",
+      "Name": "Demand Generation (1)",
+      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/9b1c51f0-064e-4ff2-a397-b91cbdd7b41f",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=9b1c51f0-064e-4ff2-a397-b91cbdd7b41f&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "7a55c054-257d-433f-a685-0aa3afefe56c",
+      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
+    },
+    {
+      "Id": "f3fa8e1e-6c6f-4966-88c2-f5a981a2010d",
+      "Name": "Sales Analytics",
+      "WebUrl": "https://app.powerbi.com/groups/4313e476-770a-4296-8964-0c3de75d82ed/reports/f3fa8e1e-6c6f-4966-88c2-f5a981a2010d",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=f3fa8e1e-6c6f-4966-88c2-f5a981a2010d&groupId=4313e476-770a-4296-8964-0c3de75d82ed&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtSC1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "fcaad20c-bae5-4d9b-81de-fb1922522b33",
+      "WorkspaceId": "4313e476-770a-4296-8964-0c3de75d82ed"
+    }
+  ]
+}
