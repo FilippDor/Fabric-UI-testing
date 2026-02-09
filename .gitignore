@@ -1,17 +1,28 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
 
 # Playwright
 node_modules/
 tests/test-results/
-tests/__pycache__/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-#devFiles
-/devFiles/
-/.venv/
-.env
-__pycache__/
-.pytest_cache/
-**/__pycache__/
 
+# Dev files
+/devFiles/
+
+# IDE
+.vscode/
+.idea/
