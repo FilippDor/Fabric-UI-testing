@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -----------------------------
 # Configuration (env only)
-# -----------------------------
+
 APP_ID = os.getenv("SP_CLIENT_ID")
 TENANT_ID = os.getenv("SP_TENANT_ID")
 CLIENT_SECRET = os.getenv("SP_CLIENT_SECRET")
@@ -23,7 +23,7 @@ OUTPUT_FILE = BASE_DIR / "metadata" / "reports" / "reports_datasets.json"
 
 # -----------------------------
 # Validation
-# -----------------------------
+
 missing = [
     name
     for name, value in {
@@ -44,7 +44,7 @@ if missing:
 
 # -----------------------------
 # Environment URLs
-# -----------------------------
+
 if ENVIRONMENT == "gov":
     AUTH_URL = f"https://login.microsoftonline.us/{TENANT_ID}/oauth2/v2.0/token"
     SCOPE = "https://analysis.usgovcloudapi.net/powerbi/api/.default"
@@ -56,7 +56,7 @@ else:
 
 # -----------------------------
 # Token Acquisition
-# -----------------------------
+
 token_resp = requests.post(
     AUTH_URL,
     data={
@@ -82,7 +82,7 @@ headers = {
 
 # -----------------------------
 # Fetch Reports
-# -----------------------------
+
 reports_url = f"{PBI_API}/v1.0/myorg/groups/{WORKSPACE_ID}/reports"
 resp = requests.get(reports_url, headers=headers, timeout=30)
 
@@ -95,12 +95,12 @@ reports_raw = resp.json().get("value", [])
 
 # -----------------------------
 # Deterministic ordering
-# -----------------------------
+
 reports_raw.sort(key=lambda r: r["id"])
 
 # -----------------------------
 # Fetch dataset details (including RLS roles)
-# -----------------------------
+
 dataset_ids = {r.get("datasetId") for r in reports_raw if r.get("datasetId")}
 dataset_metadata = {}
 
@@ -131,7 +131,7 @@ for ds_id in dataset_ids:
 
 # -----------------------------
 # Build payload
-# -----------------------------
+
 report_list = []
 for r in reports_raw:
     ds_id = r.get("datasetId")
@@ -163,7 +163,7 @@ payload = {
 
 # -----------------------------
 # Write output atomically
-# -----------------------------
+
 output_path = Path(OUTPUT_FILE).resolve()
 output_path.parent.mkdir(parents=True, exist_ok=True)
 tmp_path = output_path.with_suffix(".tmp")
@@ -175,7 +175,7 @@ tmp_path.replace(output_path)
 
 # -----------------------------
 # Machine-friendly success output
-# -----------------------------
+
 print(f"SUCCESS: Exported {payload['reportCount']} reports to {output_path}")
 
 sys.exit(0)

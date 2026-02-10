@@ -1,13 +1,40 @@
 import os
+import sys
 import time
 import json
 import base64
+import subprocess
 import webbrowser
 from pathlib import Path
 from helper_functions.log_utils import log_to_console
 
 BASE_DIR = Path(__file__).resolve().parent
 TEST_RESULTS_DIR = BASE_DIR / "tests" / "test-results"
+
+
+def pytest_sessionstart(session):
+    """Run get_workspace_reports_datasets.py before tests to ensure metadata is up to date."""
+    # Only run on the main process, not on xdist workers
+    if hasattr(session.config, "workerinput"):
+        return
+
+    script = BASE_DIR / "helper_functions" / "get_workspace_reports_datasets.py"
+    log_to_console(f"[INFO] Running {script.name} to refresh report metadata...", True)
+
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=str(BASE_DIR),
+        capture_output=True,
+        text=True,
+    )
+
+    if result.stdout:
+        log_to_console(result.stdout.strip(), True)
+    if result.returncode != 0:
+        log_to_console(f"[ERROR] {script.name} failed (exit {result.returncode})", True)
+        if result.stderr:
+            log_to_console(result.stderr.strip(), True)
+        raise SystemExit(f"{script.name} failed aborting test session")
 
 
 def _generate_html_report(final_output):
@@ -39,11 +66,11 @@ def _generate_html_report(final_output):
                 break
 
             error_rows = "".join(
-                f"<tr><td>{vid}</td><td>{msg}</td></tr>"
-                for vid, msg in errors.items()
+                f"<tr><td>{vid}</td><td>{msg}</td></tr>" for vid, msg in errors.items()
             )
 
-            failed_sections.append(f"""
+            failed_sections.append(
+                f"""
             <div class="card failed">
                 <h3>{report_name} &mdash; {page_name}</h3>
                 <p class="meta">Report ID: {report_id} | Duration: {duration:.0f}ms</p>
@@ -53,7 +80,8 @@ def _generate_html_report(final_output):
                     <tbody>{error_rows}</tbody>
                 </table>
                 {screenshot_html}
-            </div>""")
+            </div>"""
+            )
 
     pass_rate = summary.get("passRate", 0)
     status_class = "pass" if pass_rate == 100 else "fail"
@@ -139,9 +167,11 @@ def pytest_sessionfinish(session, exitstatus):
         "totalPages": total_pages,
         "failedPages": failed_pages,
         "passedPages": total_pages - failed_pages,
-        "passRate": round(
-            ((total_pages - failed_pages) / total_pages) * 100, 2
-        ) if total_pages else 0,
+        "passRate": (
+            round(((total_pages - failed_pages) / total_pages) * 100, 2)
+            if total_pages
+            else 0
+        ),
     }
 
     final_output = {

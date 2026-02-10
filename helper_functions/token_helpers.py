@@ -6,7 +6,7 @@ import requests
 
 # -----------------------------
 # Types
-# -----------------------------
+
 
 @dataclass
 class TestSettings:
@@ -37,7 +37,7 @@ class APIEndpoints:
 
 # -----------------------------
 # Get Access Token (Service Principal)
-# -----------------------------
+
 
 def get_access_token(settings: TestSettings) -> str:
     url = f"https://login.microsoftonline.com/{settings.tenant_id}/oauth2/v2.0/token"
@@ -63,12 +63,10 @@ def get_access_token(settings: TestSettings) -> str:
 
 # -----------------------------
 # Get Embed Token for a Report
-# -----------------------------
+
 
 def get_report_embed_token(
-    report_info: ReportEmbedInfo,
-    endpoints: APIEndpoints,
-    access_token: str
+    report_info: ReportEmbedInfo, endpoints: APIEndpoints, access_token: str
 ) -> str:
 
     url = (
@@ -77,9 +75,7 @@ def get_report_embed_token(
         f"{report_info.report_id}/GenerateToken"
     )
 
-    body: Dict[str, Any] = {
-        "accessLevel": "View"
-    }
+    body: Dict[str, Any] = {"accessLevel": "View"}
 
     # Build effective identity only when required by the dataset (DirectQuery/live connection with RLS)
     if report_info.is_effective_identity_required and report_info.dataset_id:
@@ -123,7 +119,7 @@ def get_report_embed_token(
 
 # -----------------------------
 # Create Report Embed Info
-# -----------------------------
+
 
 def create_report_embed_info(report: Dict[str, Any]) -> ReportEmbedInfo:
     if not report.get("WorkspaceId"):
@@ -142,27 +138,28 @@ def create_report_embed_info(report: Dict[str, Any]) -> ReportEmbedInfo:
         role=report.get("Role"),
         bookmark_id=report.get("BookmarkId"),
         is_effective_identity_required=report.get("IsEffectiveIdentityRequired", False),
-        is_effective_identity_roles_required=report.get("IsEffectiveIdentityRolesRequired", False),
+        is_effective_identity_roles_required=report.get(
+            "IsEffectiveIdentityRolesRequired", False
+        ),
     )
 
 
 # -----------------------------
 # API Endpoints helper
-# -----------------------------
+
 
 def get_api_endpoints(environment: str) -> APIEndpoints:
     env = environment.lower()
 
     if env == "prod":
         return APIEndpoints(
-            api_prefix="https://api.powerbi.com",
-            web_prefix="https://app.powerbi.com"
+            api_prefix="https://api.powerbi.com", web_prefix="https://app.powerbi.com"
         )
 
     if env == "gov":
         return APIEndpoints(
             api_prefix="https://api.powerbigov.us",
-            web_prefix="https://app.powerbigov.us"
+            web_prefix="https://app.powerbigov.us",
         )
 
     raise ValueError(f"Unknown environment: {environment}")
