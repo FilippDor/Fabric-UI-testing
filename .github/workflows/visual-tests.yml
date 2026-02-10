@@ -56,3 +56,12 @@ jobs:
           name: test-results
           path: tests/test-results/
           retention-days: 30
+
+      - name: Deploy report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: tests/test-results
+          destination_dir: report
+          keep_files: false
