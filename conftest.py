@@ -187,6 +187,33 @@ def pytest_sessionfinish(session, exitstatus):
 
     log_to_console(f"[INFO] Final aggregated JSON: {final_json}", True)
 
+    # ---------------- CONSOLE SUMMARY ----------------
+    log_to_console(
+        f"\n{'='*60}\n"
+        f"  SUMMARY: {summary['totalReports']} reports | "
+        f"{summary['totalPages']} pages | "
+        f"{summary['passedPages']} passed | "
+        f"{summary['failedPages']} failed | "
+        f"{summary['passRate']}% pass rate\n"
+        f"{'='*60}",
+        True,
+    )
+
+    if summary["failedPages"] > 0:
+        log_to_console("\n  FAILED PAGES:", True)
+        for report in all_results:
+            report_name = report.get("reportName", "Unknown")
+            for page_name, page_info in report.get("pages", {}).items():
+                if page_info.get("errors"):
+                    url = page_info.get("serviceUrl", "N/A")
+                    error_count = len(page_info["errors"])
+                    log_to_console(
+                        f"    ✗ {report_name} / {page_name} ({error_count} error(s))\n"
+                        f"      {url}",
+                        True,
+                    )
+        log_to_console("", True)
+
     # ---------------- HTML REPORT ----------------
     html_report = TEST_RESULTS_DIR / "report.html"
     html_report.write_text(_generate_html_report(final_output), encoding="utf-8")
