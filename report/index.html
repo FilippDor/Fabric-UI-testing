@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI Visual Testing Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-bright: #f0f6fc;
+    --green: #3fb950;
+    --green-bg: rgba(63,185,80,0.15);
+    --red: #f85149;
+    --red-bg: rgba(248,81,73,0.15);
+    --blue: #58a6ff;
+    --blue-bg: rgba(88,166,255,0.15);
+    --yellow: #d29922;
+    --yellow-bg: rgba(210,153,34,0.15);
+    --purple: #8b5cf6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+
+  /* ---- NAV ---- */
+  .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav h1 { font-size: 18px; color: var(--text-bright); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .nav .links { display: flex; gap: 20px; }
+  .nav .links a { color: var(--blue); text-decoration: none; font-size: 14px; }
+  .nav .links a:hover { text-decoration: underline; }
+
+  /* ---- HERO / PIPELINE ANIMATION ---- */
+  .hero { position: relative; height: 500px; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .phase { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; animation-duration: 15s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+  .phase1 { animation-name: p1; } .phase2 { animation-name: p2; } .phase3 { animation-name: p3; } .phase4 { animation-name: p4; } .phase5 { animation-name: p5; }
+  @keyframes p1 { 0% { opacity:0;transform:scale(.95); } 3% { opacity:1;transform:scale(1); } 18% { opacity:1; } 22% { opacity:0; } 100% { opacity:0; } }
+  @keyframes p2 { 0%,20% { opacity:0;transform:scale(.95); } 24% { opacity:1;transform:scale(1); } 38% { opacity:1; } 42% { opacity:0; } 100% { opacity:0; } }
+  @keyframes p3 { 0%,40% { opacity:0;transform:scale(.95); } 44% { opacity:1;transform:scale(1); } 58% { opacity:1; } 62% { opacity:0; } 100% { opacity:0; } }
+  @keyframes p4 { 0%,60% { opacity:0;transform:scale(.95); } 63% { opacity:1;transform:scale(1); } 72% { opacity:1; } 76% { opacity:0; } 100% { opacity:0; } }
+  @keyframes p5 { 0%,73% { opacity:0;transform:scale(.95); } 77% { opacity:1;transform:scale(1); } 96% { opacity:1; } 100% { opacity:0; } }
+
+  .console { background: var(--surface); border-radius: 12px; width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,.5); overflow: hidden; }
+  .console-bar { background: var(--bg); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+  .cdot { width: 12px; height: 12px; border-radius: 50%; }
+  .cdot.r { background: #ff5f57; } .cdot.y { background: #ffbd2e; } .cdot.g { background: #28c840; }
+  .console-title { color: var(--text-muted); font-size: 13px; margin-left: 12px; }
+  .console-body { padding: 20px 24px; font-family: 'SF Mono','Cascadia Code','Consolas',monospace; font-size: 13px; line-height: 1.9; }
+  .spinner { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .phase-label { position: absolute; top: 20px; right: 30px; color: #fff; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+  .error-flash { position: absolute; inset: 0; background: rgba(248,81,73,.08); animation: ef .6s ease-in-out 3; }
+  @keyframes ef { 0%,100% { opacity:0; } 50% { opacity:1; } }
+  .error-banner { background: var(--red-bg); border: 2px solid var(--red); border-radius: 12px; padding: 24px 36px; text-align: center; }
+  .error-banner .big-icon { font-size: 48px; margin-bottom: 12px; }
+  .error-banner h2 { font-size: 22px; color: var(--red); margin-bottom: 8px; }
+  .error-banner p { font-size: 14px; color: #ffa198; }
+
+  .scan-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; width: 440px; }
+  .scan-page { background: var(--surface); border: 2px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; font-size: 13px; color: var(--text-muted); }
+  .scan-page.ok { border-color: var(--green); color: var(--green); }
+  .scan-page.checking { border-color: var(--yellow); animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(210,153,34,.3); } 50% { box-shadow: 0 0 0 8px rgba(210,153,34,0); } }
+  .scan-page .pi { font-size: 24px; margin-bottom: 6px; }
+
+  /* ---- MAIN CONTENT ---- */
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+  /* ---- SUMMARY CARDS ---- */
+  .summary-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; margin-bottom: 40px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-card .val { font-size: 36px; font-weight: 700; color: var(--text-bright); }
+  .stat-card .val.green { color: var(--green); }
+  .stat-card .val.red { color: var(--red); }
+  .stat-card .val.blue { color: var(--blue); }
+  .stat-card .val.yellow { color: var(--yellow); }
+  .stat-card .lbl { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+
+  /* ---- SECTION ---- */
+  .section-title { font-size: 20px; font-weight: 700; color: var(--text-bright); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+  /* ---- REPORT TABLE ---- */
+  .report-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+  .report-table th { text-align: left; padding: 12px 16px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); }
+  .report-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .report-table tr:hover { background: rgba(255,255,255,.02); }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+  .badge.pass { background: var(--green-bg); color: var(--green); }
+  .badge.fail { background: var(--red-bg); color: var(--red); }
+
+  /* ---- FAILED PAGES ---- */
+  .failed-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .failed-card h3 { color: var(--text-bright); font-size: 16px; margin-bottom: 8px; }
+  .failed-card .meta { color: var(--text-muted); font-size: 13px; margin-bottom: 12px; }
+  .failed-card .meta a { color: var(--blue); text-decoration: none; }
+  .failed-card .meta a:hover { text-decoration: underline; }
+  .error-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px; }
+  .error-table th { text-align: left; padding: 8px 12px; background: var(--bg); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  .error-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--red); }
+  .screenshot { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); margin-top: 12px; }
+
+  /* ---- FLOW DIAGRAM ---- */
+  .flow { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; padding: 40px 0; margin-bottom: 40px; }
+  .step-box { width: 130px; height: 130px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .step-box .icon { font-size: 32px; }
+  .step-box .label { font-size: 11px; font-weight: 600; text-align: center; line-height: 1.3; }
+  .step-box.trigger { background: linear-gradient(135deg,#1f2937,#111827); border: 2px solid var(--border); color: var(--text); }
+  .step-box.process { background: linear-gradient(135deg,#0c2d6b,#1a3a7a); border: 2px solid #1f6feb; color: #79c0ff; }
+  .step-box.detect { background: linear-gradient(135deg,#3b1d0e,#5a2d0e); border: 2px solid var(--yellow); color: #e3b341; }
+  .step-box.capture { background: linear-gradient(135deg,#1a0e2e,#2d1b4e); border: 2px solid var(--purple); color: #c4b5fd; }
+  .step-box.result-pass { background: linear-gradient(135deg,#0b2e1a,#0d3820); border: 2px solid var(--green); color: #7ee787; }
+  .step-box.result-fail { background: linear-gradient(135deg,#3b1118,#4a1520); border: 2px solid var(--red); color: #ffa198; }
+  .arrow-sep { width: 44px; display: flex; align-items: center; justify-content: center; color: var(--border); }
+  .arrow-sep svg { width: 36px; height: 18px; }
+  .sub-label { font-size: 10px; color: var(--text-muted); text-align: center; max-width: 130px; margin-top: 8px; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .branch-connector { display: flex; gap: 16px; }
+  .branch-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+  /* ---- FOOTER ---- */
+  .footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .summary-grid { grid-template-columns: repeat(2,1fr); }
+    .flow { gap: 8px; }
+    .step-box { width: 90px; height: 90px; }
+    .hero { height: 400px; }
+    .console { width: 90%; }
+    .scan-grid { width: 90%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <h1>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    Power BI Visual Testing
+  </h1>
+  <div class="links">
+    <a href="#results">Results</a>
+    <a href="#failures">Failures</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="https://github.com/FilippDor/Fabric_CICD" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- HERO: Pipeline Animation -->
+<section class="hero">
+  <!-- Phase 1: Pipeline Starting -->
+  <div class="phase phase1">
+    <div class="console">
+      <div class="console-bar"><div class="cdot r"></div><div class="cdot y"></div><div class="cdot g"></div><div class="console-title">GitHub Actions &mdash; Power BI Visual Test</div></div>
+      <div class="console-body">
+        <div><span style="color:var(--green)">&#10004;</span> Setting up Python 3.11</div>
+        <div><span style="color:var(--green)">&#10004;</span> Installing dependencies</div>
+        <div><span style="color:var(--green)">&#10004;</span> Installing Playwright browsers</div>
+        <div><span style="color:var(--green)">&#10004;</span> Refreshing workspace metadata...</div>
+        <div><span style="color:var(--yellow)"><span class="spinner">&#9696;</span></span> <strong>Running visual tests across 4 reports...</strong></div>
+        <div style="color:var(--text-muted);margin-top:8px;">pytest tests/ -n auto --headed=false</div>
+      </div>
+    </div>
+    <div class="phase-label" style="background:rgba(31,111,235,.9);box-shadow:0 4px 16px rgba(31,111,235,.4);">Pipeline Running...</div>
+  </div>
+
+  <!-- Phase 2: Scanning Pages -->
+  <div class="phase phase2">
+    <div style="text-align:center;margin-bottom:20px;">
+      <h2 style="color:var(--text-bright);font-size:20px;">Embedding reports in headless Chromium...</h2>
+      <p style="color:var(--text-muted);font-size:14px;margin-top:4px;">Navigating every page of every report</p>
+    </div>
+    <div class="scan-grid">
+      <div class="scan-page ok"><div class="pi">&#9989;</div><div>Page 1</div><div style="font-size:11px;margin-top:4px;">2.9s</div></div>
+      <div class="scan-page ok"><div class="pi">&#9989;</div><div>Page 2</div><div style="font-size:11px;margin-top:4px;">1.3s</div></div>
+      <div class="scan-page checking"><div class="pi">&#128269;</div><div>Page 3</div><div style="font-size:11px;margin-top:4px;">scanning...</div></div>
+    </div>
+    <div class="phase-label" style="background:rgba(210,153,34,.9);box-shadow:0 4px 16px rgba(210,153,34,.4);">Scanning Visuals...</div>
+  </div>
+
+  <!-- Phase 3: Error Detected -->
+  <div class="phase phase3">
+    <div class="error-flash"></div>
+    <div class="error-banner">
+      <div class="big-icon">&#9888;&#65039;</div>
+      <h2>Broken Visual Detected</h2>
+      <p>QueryUserError &mdash; Screenshot captured automatically</p>
+      <p style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--red);">&#128247; 3 screenshots saved</p>
+    </div>
+    <div class="phase-label" style="background:rgba(248,81,73,.9);box-shadow:0 4px 16px rgba(248,81,73,.4);">Screenshots Captured</div>
+  </div>
+
+  <!-- Phase 4: Generating Report -->
+  <div class="phase phase4">
+    <div class="console">
+      <div class="console-bar"><div class="cdot r"></div><div class="cdot y"></div><div class="cdot g"></div><div class="console-title">Test Summary</div></div>
+      <div class="console-body">
+        <div>============================================================</div>
+        <div>&nbsp; SUMMARY: <span style="color:var(--blue)">4</span> reports | <span style="color:var(--text-bright)">19</span> pages | <span style="color:var(--green)">16</span> passed | <span style="color:var(--red)">3</span> failed | <span style="color:var(--yellow)">84.21%</span> pass rate</div>
+        <div>============================================================</div>
+        <div style="margin-top:8px;">&nbsp; FAILED PAGES:</div>
+        <div>&nbsp;&nbsp;&nbsp; <span style="color:var(--red)">&#10007;</span> Competitive Marketing / Page 1 (1 error)</div>
+        <div>&nbsp;&nbsp;&nbsp; <span style="color:var(--red)">&#10007;</span> Corporate Spend / IT Spend Trend (1 error)</div>
+        <div>&nbsp;&nbsp;&nbsp; <span style="color:var(--red)">&#10007;</span> Corporate Spend / Plan Variance (1 error)</div>
+      </div>
+    </div>
+    <div class="phase-label" style="background:rgba(63,185,80,.9);box-shadow:0 4px 16px rgba(63,185,80,.4);">Report Generated</div>
+  </div>
+
+  <!-- Phase 5: Dashboard Preview -->
+  <div class="phase phase5">
+    <div style="text-align:center;">
+      <h2 style="color:var(--text-bright);font-size:24px;margin-bottom:8px;">Dashboard Ready</h2>
+      <p style="color:var(--text-muted);font-size:15px;">Scroll down for full results</p>
+      <svg style="margin-top:20px;color:var(--text-muted);animation:bounce 2s ease-in-out infinite;" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="phase-label" style="background:rgba(88,166,255,.9);box-shadow:0 4px 16px rgba(88,166,255,.4);">View Results Below</div>
+  </div>
+</section>
+<style>@keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(8px); } }</style>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+  <!-- Summary Stats (populated by JS) -->
+  <div id="summary-grid" class="summary-grid"></div>
+
+  <!-- Report Results Table -->
+  <h2 class="section-title" id="results">Report Results</h2>
+  <table class="report-table">
+    <thead><tr><th>Report</th><th>Pages</th><th>Passed</th><th>Failed</th><th>Duration</th><th>Status</th></tr></thead>
+    <tbody id="report-rows"></tbody>
+  </table>
+
+  <!-- Failed Pages -->
+  <h2 class="section-title" id="failures">Failed Pages</h2>
+  <div id="failed-pages"></div>
+
+  <!-- Pipeline Flow Diagram -->
+  <h2 class="section-title" id="pipeline">Pipeline Flow</h2>
+  <div class="flow">
+    <div class="step">
+      <div class="step-box trigger">
+        <div class="icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></div>
+        <div class="label">GitHub Actions</div>
+      </div>
+      <div class="sub-label">Push / Schedule</div>
+    </div>
+    <div class="arrow-sep"><svg viewBox="0 0 36 18" fill="none"><path d="M0 9H28M24 3l8 6-8 6" stroke="#484f58" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="step">
+      <div class="step-box process">
+        <div class="icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="label">Headless Chromium</div>
+      </div>
+      <div class="sub-label">Playwright + PBI SDK</div>
+    </div>
+    <div class="arrow-sep"><svg viewBox="0 0 36 18" fill="none"><path d="M0 9H28M24 3l8 6-8 6" stroke="#484f58" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="step">
+      <div class="step-box detect">
+        <div class="icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="label">Scan Visuals</div>
+      </div>
+      <div class="sub-label">Navigate all pages</div>
+    </div>
+    <div class="arrow-sep"><svg viewBox="0 0 36 18" fill="none"><path d="M0 9H28M24 3l8 6-8 6" stroke="#484f58" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="step">
+      <div class="step-box capture">
+        <div class="icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div class="label">Screenshot Failures</div>
+      </div>
+      <div class="sub-label">Auto-captured</div>
+    </div>
+    <div class="arrow-sep"><svg viewBox="0 0 36 18" fill="none"><path d="M0 9H28M24 3l8 6-8 6" stroke="#484f58" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="step">
+      <div class="branch-connector">
+        <div class="branch-item">
+          <div class="step-box result-pass" style="width:110px;height:110px;">
+            <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="label">Pass</div>
+          </div>
+          <span class="badge pass" id="pass-badge">-</span>
+        </div>
+        <div class="branch-item">
+          <div class="step-box result-fail" style="width:110px;height:110px;">
+            <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <div class="label">Fail</div>
+          </div>
+          <span class="badge fail" id="fail-badge">-</span>
+        </div>
+      </div>
+      <div class="sub-label" style="margin-top:8px;">HTML report deployed</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Generated by <a href="https://github.com/FilippDor/Fabric_CICD">Power BI Visual Testing Pipeline</a> &mdash; <span id="generated-at"></span></p>
+  <p style="margin-top:4px;">Python + Pytest + Playwright + GitHub Actions</p>
+</div>
+
+<!-- DATA-DRIVEN RENDERING -->
+<script>
+(async () => {
+  let data;
+  try {
+    const resp = await fetch('all_reports_results.json');
+    data = await resp.json();
+  } catch (e) {
+    document.getElementById('summary-grid').innerHTML = '<p style="color:var(--red);grid-column:1/-1;">Failed to load results JSON.</p>';
+    return;
+  }
+
+  const summary = data.summary;
+  const reports = data.reports;
+
+  // Generated at
+  document.getElementById('generated-at').textContent = data.generatedAt || 'N/A';
+
+  // Summary cards
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="stat-card"><div class="val blue">${summary.totalReports}</div><div class="lbl">Reports</div></div>
+    <div class="stat-card"><div class="val">${summary.totalPages}</div><div class="lbl">Total Pages</div></div>
+    <div class="stat-card"><div class="val green">${summary.passedPages}</div><div class="lbl">Passed</div></div>
+    <div class="stat-card"><div class="val red">${summary.failedPages}</div><div class="lbl">Failed</div></div>
+    <div class="stat-card"><div class="val yellow">${summary.passRate}%</div><div class="lbl">Pass Rate</div></div>
+  `;
+
+  // Pipeline badges
+  document.getElementById('pass-badge').textContent = summary.passedPages + ' PAGES';
+  document.getElementById('fail-badge').textContent = summary.failedPages + ' PAGES';
+
+  // Report table
+  const tbody = document.getElementById('report-rows');
+  reports.forEach(r => {
+    const pages = Object.values(r.pages || {});
+    const total = pages.length;
+    const failed = pages.filter(p => p.errors && Object.keys(p.errors).length > 0).length;
+    const passed = total - failed;
+    const dur = (r.totalDuration / 1000).toFixed(1);
+    const status = failed > 0
+      ? `<span class="badge fail">${failed} FAIL</span>`
+      : `<span class="badge pass">PASS</span>`;
+    tbody.innerHTML += `<tr>
+      <td style="color:var(--text-bright);font-weight:600;">${r.reportName}</td>
+      <td>${total}</td>
+      <td style="color:var(--green)">${passed}</td>
+      <td style="color:${failed > 0 ? 'var(--red)' : 'var(--text-muted)'}">${failed}</td>
+      <td style="color:var(--text-muted)">${dur}s</td>
+      <td>${status}</td>
+    </tr>`;
+  });
+
+  // Failed pages
+  const failedContainer = document.getElementById('failed-pages');
+  let hasFailures = false;
+
+  reports.forEach(r => {
+    Object.entries(r.pages || {}).forEach(([pageName, info]) => {
+      if (!info.errors || Object.keys(info.errors).length === 0) return;
+      hasFailures = true;
+
+      const errorRows = Object.entries(info.errors)
+        .map(([vid, msg]) => `<tr><td style="color:var(--text-muted)">${vid}</td><td>${msg}</td></tr>`)
+        .join('');
+
+      // Try to find screenshot (check common suffixes)
+      const screenshotCandidates = ['master', 'gw0', 'gw1', 'gw2', 'gw3'];
+      let screenshotHtml = '';
+      const imgEl = document.createElement('img');
+
+      failedContainer.innerHTML += `
+        <div class="failed-card">
+          <h3>${r.reportName} &mdash; ${pageName}</h3>
+          <div class="meta">
+            Duration: ${(info.duration / 1000).toFixed(1)}s &nbsp;|&nbsp;
+            <a href="${info.serviceUrl}" target="_blank">Open in Power BI</a>
+          </div>
+          <table class="error-table">
+            <thead><tr><th>Visual</th><th>Error</th></tr></thead>
+            <tbody>${errorRows}</tbody>
+          </table>
+          <div class="screenshot-container" data-page="${pageName}"></div>
+        </div>
+      `;
+    });
+  });
+
+  if (!hasFailures) {
+    failedContainer.innerHTML = `
+      <div style="text-align:center;padding:40px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
+        <div style="font-size:48px;margin-bottom:12px;">&#9989;</div>
+        <h3 style="color:var(--green);font-size:18px;">All pages passed visual validation</h3>
+      </div>
+    `;
+  }
+
+  // Load screenshots
+  document.querySelectorAll('.screenshot-container').forEach(container => {
+    const pageName = container.dataset.page;
+    const suffixes = ['master', 'gw0', 'gw1', 'gw2', 'gw3'];
+    for (const suffix of suffixes) {
+      const img = new Image();
+      const src = `${pageName}_${suffix}.png`;
+      img.onload = () => {
+        img.className = 'screenshot';
+        img.alt = pageName;
+        container.appendChild(img);
+      };
+      img.src = src;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
