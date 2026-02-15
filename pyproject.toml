@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fabric-ci-test"
+version = "0.1.0"
+description = "Power BI visual regression testing CLI for Microsoft Fabric CI/CD"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.0",
+    "playwright>=1.40",
+    "pytest>=7.0",
+    "pytest-html>=4.0",
+    "pytest-playwright>=0.7",
+    "pytest-xdist>=3.0",
+    "python-dotenv>=1.0",
+    "requests>=2.28",
+]
+
+[project.scripts]
+fabric-ci-test = "fabric_ci_test.cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["fabric_ci_test*", "helper_functions*"]

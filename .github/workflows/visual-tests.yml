@@ -25,10 +25,10 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: requirements_visual_test.txt
+          cache-dependency-path: pyproject.toml
 
-      - name: Install Python dependencies
-        run: pip install -r requirements_visual_test.txt
+      - name: Install package
+        run: pip install .
 
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
