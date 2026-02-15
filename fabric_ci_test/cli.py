@@ -111,7 +111,7 @@ def test(workers, test_filter, pytest_args):
     cmd.extend(pytest_args)
 
     click.echo("Running visual regression tests...")
-    result = subprocess.run(cmd, cwd=str(root), check=False)
+    result = subprocess.run(cmd, cwd=str(root))
     sys.exit(result.returncode)
 
 

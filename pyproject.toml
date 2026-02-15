@@ -9,6 +9,15 @@ description = "Power BI visual regression testing CLI for Microsoft Fabric CI/CD
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
+authors = [{name = "Filippos A. Dorezi", email = "filippos.dorezi@gmail.com}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "click>=8.0",
     "playwright>=1.40",
@@ -22,6 +31,11 @@ dependencies = [
 
 [project.scripts]
 fabric-ci-test = "fabric_ci_test.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/FilippDor/Fabric-UI-testing"
+Repository = "https://github.com/FilippDor/Fabric-UI-testing"
+Issues = "https://github.com/FilippDor/Fabric-UI-testing/issues"
 
 [tool.setuptools.packages.find]
 include = ["fabric_ci_test*", "helper_functions*"]

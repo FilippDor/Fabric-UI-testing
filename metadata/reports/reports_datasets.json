@@ -1,7 +1,7 @@
 {
   "workspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
-  "generatedAtUtc": "2026-02-15T13:34:04+00:00Z",
-  "reportCount": 5,
+  "generatedAtUtc": "2026-02-15T14:08:03+00:00Z",
+  "reportCount": 4,
   "reports": [
     {
       "Id": "009214c6-654c-42a7-aa8a-3289128d0e59",
@@ -15,34 +15,23 @@
       "IsEffectiveIdentityRolesRequired": true
     },
     {
-      "Id": "1198ff9d-d455-40a6-8cb5-c03557b73947",
-      "Name": "CountrySalesPerformance",
-      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/rdlreports/1198ff9d-d455-40a6-8cb5-c03557b73947",
-      "EmbedUrl": "https://app.powerbi.com/rdlEmbed?reportId=1198ff9d-d455-40a6-8cb5-c03557b73947&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
-      "DatasetId": null,
-      "DatasetName": "",
-      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
-      "IsEffectiveIdentityRequired": false,
-      "IsEffectiveIdentityRolesRequired": false
-    },
-    {
-      "Id": "1515a8ad-9ffa-4f41-99f3-8fe10440ae6c",
-      "Name": "Competitive Marketing Analysis",
-      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/1515a8ad-9ffa-4f41-99f3-8fe10440ae6c",
-      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=1515a8ad-9ffa-4f41-99f3-8fe10440ae6c&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
-      "DatasetId": "7f7e969d-19b4-4dfa-8072-cc76b6e7174f",
-      "DatasetName": "Competitive Marketing Analysis",
-      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
-      "IsEffectiveIdentityRequired": false,
-      "IsEffectiveIdentityRolesRequired": false
-    },
-    {
       "Id": "b0df05af-1b3e-43b3-a187-efde0274fd3e",
       "Name": "Corporate Spend",
       "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/b0df05af-1b3e-43b3-a187-efde0274fd3e",
       "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=b0df05af-1b3e-43b3-a187-efde0274fd3e&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
       "DatasetId": "dceed2c9-7442-4427-aa26-4b4e390f8ed8",
       "DatasetName": "Corporate Spend",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": false,
+      "IsEffectiveIdentityRolesRequired": false
+    },
+    {
+      "Id": "de6e672c-d43e-4e70-b8e5-caa55f03b957",
+      "Name": "Competitive Marketing Analysis",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/de6e672c-d43e-4e70-b8e5-caa55f03b957",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=de6e672c-d43e-4e70-b8e5-caa55f03b957&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "f915e4de-f663-4f20-ab26-62aec568ce68",
+      "DatasetName": "",
       "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
       "IsEffectiveIdentityRequired": false,
       "IsEffectiveIdentityRolesRequired": false
