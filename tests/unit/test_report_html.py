@@ -96,7 +96,7 @@ class TestGenerateHtmlReport:
     def test_all_pass_shows_success_message(self, sample_output_all_pass, tmp_path):
         html = generate_html_report(sample_output_all_pass, tmp_path)
 
-        assert "All pages passed" in html
+        assert "All pages and bookmarks passed" in html
 
     def test_failures_shown(self, sample_output_with_failures, tmp_path):
         html = generate_html_report(sample_output_with_failures, tmp_path)
@@ -164,3 +164,124 @@ class TestGenerateHtmlReport:
         assert "Error A" in html
         assert "Error B" in html
         assert "page-grid" in html
+
+    def test_bookmark_failure_shown_with_prefix(self, tmp_path):
+        """Failed bookmark entries should display with 'Bookmark:' prefix."""
+        data = {
+            "environment": "prod",
+            "generatedAt": "2026-01-15T12:00:00Z",
+            "summary": {
+                "totalReports": 1,
+                "totalPages": 1,
+                "failedPages": 0,
+                "passedPages": 1,
+                "passRate": 100,
+                "totalBookmarks": 1,
+                "failedBookmarks": 1,
+            },
+            "reports": [
+                {
+                    "reportId": "r1",
+                    "reportName": "Bookmark Report",
+                    "pages": {
+                        "page1": {
+                            "errors": {},
+                            "duration": 1000,
+                            "serviceUrl": "https://example.com/p1",
+                        },
+                        "bookmark:bm1": {
+                            "errors": {"unknown": "Render failed"},
+                            "duration": 15000,
+                            "bookmarkDisplayName": "Q1 Filter",
+                            "serviceUrl": "https://example.com/p1?bookmarkGuid=bm1",
+                        },
+                    },
+                }
+            ],
+        }
+
+        html = generate_html_report(data, tmp_path)
+
+        assert "Bookmark: Q1 Filter" in html
+        assert "Render failed" in html
+        assert "bookmark-tile" in html
+        assert "1 failed bookmark" in html
+
+    def test_mixed_page_and_bookmark_failures(self, tmp_path):
+        """Both page and bookmark failures in one report should appear in one card."""
+        data = {
+            "environment": "prod",
+            "generatedAt": "2026-01-15T12:00:00Z",
+            "summary": {
+                "totalReports": 1,
+                "totalPages": 2,
+                "failedPages": 1,
+                "passedPages": 1,
+                "passRate": 50.0,
+                "totalBookmarks": 1,
+                "failedBookmarks": 1,
+            },
+            "reports": [
+                {
+                    "reportId": "r1",
+                    "reportName": "Mixed Failures",
+                    "pages": {
+                        "page1": {
+                            "errors": {"v1": "Page error"},
+                            "duration": 15000,
+                            "serviceUrl": "https://example.com/p1",
+                        },
+                        "page2": {
+                            "errors": {},
+                            "duration": 500,
+                            "serviceUrl": "https://example.com/p2",
+                        },
+                        "bookmark:bm-sales": {
+                            "errors": {"unknown": "Bookmark render failed"},
+                            "duration": 15000,
+                            "bookmarkDisplayName": "Sales View",
+                            "serviceUrl": "https://example.com/p1?bookmarkGuid=bm-sales",
+                        },
+                    },
+                }
+            ],
+        }
+
+        html = generate_html_report(data, tmp_path)
+
+        assert html.count("Mixed Failures") == 1
+        assert "1 failed page" in html
+        assert "1 failed bookmark" in html
+        assert "Page error" in html
+        assert "Bookmark: Sales View" in html
+        assert "Bookmark render failed" in html
+
+    def test_bookmark_summary_stats_shown(self, tmp_path):
+        """Bookmark stats should appear in the summary bar when bookmarks exist."""
+        data = {
+            "environment": "prod",
+            "generatedAt": "2026-01-15T12:00:00Z",
+            "summary": {
+                "totalReports": 1,
+                "totalPages": 1,
+                "failedPages": 0,
+                "passedPages": 1,
+                "passRate": 100,
+                "totalBookmarks": 3,
+                "failedBookmarks": 1,
+            },
+            "reports": [],
+        }
+
+        html = generate_html_report(data, tmp_path)
+
+        assert "Bookmarks" in html
+        assert "BM Passed" in html
+        assert "BM Failed" in html
+
+    def test_no_bookmark_stats_when_zero(self, sample_output_all_pass, tmp_path):
+        """Bookmark stats should not appear when there are no bookmarks."""
+        html = generate_html_report(sample_output_all_pass, tmp_path)
+
+        assert "Bookmarks" not in html
+        assert "BM Passed" not in html

@@ -50,10 +50,19 @@ def pytest_sessionfinish(session, exitstatus):
 
     total_pages = 0
     failed_pages = 0
+    total_bookmarks = 0
+    failed_bookmarks = 0
     for report in all_results:
         pages = report.get("pages", {})
-        total_pages += len(pages)
-        failed_pages += sum(1 for p in pages.values() if p.get("errors"))
+        for entry_info in pages.values():
+            if "bookmarkDisplayName" in entry_info:
+                total_bookmarks += 1
+                if entry_info.get("errors"):
+                    failed_bookmarks += 1
+            else:
+                total_pages += 1
+                if entry_info.get("errors"):
+                    failed_pages += 1
 
     summary = {
         "totalReports": len(all_results),
@@ -63,6 +72,8 @@ def pytest_sessionfinish(session, exitstatus):
         "passRate": (
             round(((total_pages - failed_pages) / total_pages) * 100, 2) if total_pages else 0
         ),
+        "totalBookmarks": total_bookmarks,
+        "failedBookmarks": failed_bookmarks,
     }
 
     final_output = {

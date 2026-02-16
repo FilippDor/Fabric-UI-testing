@@ -15,21 +15,33 @@ def generate_html_report(final_output: dict, results_dir: Path) -> str:
         report_name = report.get("reportName", "Unknown")
         report_id = report.get("reportId", "")
 
-        # Collect all failed pages for this report
-        failed_pages = []
-        for page_name, page_info in report.get("pages", {}).items():
-            errors = page_info.get("errors", {})
+        # Collect all failed entries (pages + bookmarks) for this report
+        failed_entries = []
+        for entry_key, entry_info in report.get("pages", {}).items():
+            errors = entry_info.get("errors", {})
             if not errors:
                 continue
 
-            service_url = page_info.get("serviceUrl", "")
-            duration = page_info.get("duration", 0)
+            is_bookmark = "bookmarkDisplayName" in entry_info
+            display_name = (
+                f"Bookmark: {entry_info['bookmarkDisplayName']}" if is_bookmark else entry_key
+            )
 
+            service_url = entry_info.get("serviceUrl", "")
+            duration = entry_info.get("duration", 0)
+
+            # Find screenshot — bookmarks use bookmark_ prefix
             screenshot_html = ""
-            for png in results_dir.glob(f"{page_name}_*.png"):
+            if is_bookmark:
+                bm_name = entry_key[len("bookmark:") :]
+                glob_pattern = f"bookmark_{bm_name}_*.png"
+            else:
+                glob_pattern = f"{entry_key}_*.png"
+
+            for png in results_dir.glob(glob_pattern):
                 img_data = base64.b64encode(png.read_bytes()).decode("utf-8")
                 screenshot_html = (
-                    f'<img src="data:image/png;base64,{img_data}" alt="{page_name}" />'
+                    f'<img src="data:image/png;base64,{img_data}" alt="{display_name}" />'
                 )
                 break
 
@@ -37,32 +49,48 @@ def generate_html_report(final_output: dict, results_dir: Path) -> str:
                 f"<tr><td>{vid}</td><td>{msg}</td></tr>" for vid, msg in errors.items()
             )
 
-            failed_pages.append(
+            failed_entries.append(
                 {
-                    "page_name": page_name,
+                    "display_name": display_name,
                     "service_url": service_url,
                     "duration": duration,
                     "error_rows": error_rows,
                     "screenshot_html": screenshot_html,
+                    "is_bookmark": is_bookmark,
                 }
             )
 
-        if not failed_pages:
+        if not failed_entries:
             continue
 
-        # Build page tiles for this report
-        page_tiles = []
-        for fp in failed_pages:
-            page_tiles.append(
-                f"""<div class="page-tile">
-                    <h4>{fp["page_name"]}</h4>
-                    <p class="meta">Duration: {fp["duration"]:.0f}ms</p>
-                    <p><a href="{fp["service_url"]}" target="_blank">Open in Power BI</a></p>
+        failed_page_count = sum(1 for e in failed_entries if not e["is_bookmark"])
+        failed_bm_count = sum(1 for e in failed_entries if e["is_bookmark"])
+
+        meta_parts = []
+        meta_parts.append(f"Report ID: {report_id}")
+        if failed_page_count:
+            meta_parts.append(
+                f"{failed_page_count} failed page{'s' if failed_page_count != 1 else ''}"
+            )
+        if failed_bm_count:
+            meta_parts.append(
+                f"{failed_bm_count} failed bookmark{'s' if failed_bm_count != 1 else ''}"
+            )
+
+        # Build tiles for this report
+        tiles = []
+        for entry in failed_entries:
+            tile_class = "page-tile bookmark-tile" if entry["is_bookmark"] else "page-tile"
+            tiles.append(
+                f"""<div class="{tile_class}">
+                    <h4>{entry["display_name"]}</h4>
+                    <p class="meta">Duration: {entry["duration"]:.0f}ms</p>
+                    <p><a href="{entry["service_url"]}" target="_blank">Open in Power BI</a></p>
                     <table>
                         <thead><tr><th>Visual</th><th>Error</th></tr></thead>
-                        <tbody>{fp["error_rows"]}</tbody>
+                        <tbody>{entry["error_rows"]}</tbody>
                     </table>
-                    {fp["screenshot_html"]}
+                    {entry["screenshot_html"]}
                 </div>"""
             )
 
@@ -70,15 +98,27 @@ def generate_html_report(final_output: dict, results_dir: Path) -> str:
             f"""
             <div class="card failed">
                 <h3>{report_name}</h3>
-                <p class="meta">Report ID: {report_id} | {len(failed_pages)} failed page{"s" if len(failed_pages) != 1 else ""}</p>
+                <p class="meta">{" | ".join(meta_parts)}</p>
                 <div class="page-grid">
-                    {"".join(page_tiles)}
+                    {"".join(tiles)}
                 </div>
             </div>"""
         )
 
     pass_rate = summary.get("passRate", 0)
     status_class = "pass" if pass_rate == 100 else "fail"
+
+    # Bookmark summary stats
+    total_bookmarks = summary.get("totalBookmarks", 0)
+    failed_bookmarks = summary.get("failedBookmarks", 0)
+
+    bookmark_stats_html = ""
+    if total_bookmarks > 0:
+        bm_passed = total_bookmarks - failed_bookmarks
+        bookmark_stats_html = f"""
+    <div class="stat"><div class="label">Bookmarks</div><div class="value">{total_bookmarks}</div></div>
+    <div class="stat"><div class="label">BM Passed</div><div class="value pass">{bm_passed}</div></div>
+    <div class="stat"><div class="label">BM Failed</div><div class="value fail">{failed_bookmarks}</div></div>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -107,6 +147,7 @@ def generate_html_report(final_output: dict, results_dir: Path) -> str:
     .page-tile h4 {{ margin: 0 0 6px 0; font-size: 15px; }}
     .page-tile .meta {{ margin: 0 0 4px 0; }}
     .page-tile img {{ max-width: 100%; border: 1px solid #ddd; border-radius: 4px; margin-top: 8px; }}
+    .bookmark-tile {{ border-left: 3px solid #0366d6; }}
     table {{ width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }}
     th, td {{ text-align: left; padding: 6px 10px; border-bottom: 1px solid #eee; }}
     th {{ background: #f9f9f9; font-weight: 600; }}
@@ -124,14 +165,14 @@ def generate_html_report(final_output: dict, results_dir: Path) -> str:
     <div class="stat"><div class="label">Total Pages</div><div class="value">{summary.get("totalPages", 0)}</div></div>
     <div class="stat"><div class="label">Passed</div><div class="value pass">{summary.get("passedPages", 0)}</div></div>
     <div class="stat"><div class="label">Failed</div><div class="value fail">{summary.get("failedPages", 0)}</div></div>
-    <div class="stat"><div class="label">Pass Rate</div><div class="value {status_class}">{pass_rate}%</div></div>
+    <div class="stat"><div class="label">Pass Rate</div><div class="value {status_class}">{pass_rate}%</div></div>{bookmark_stats_html}
 </div>
 """
 
     if failed_sections:
         html += "<h2>Failed Reports</h2>\n" + "\n".join(failed_sections)
     else:
-        html += '<div class="card all-pass"><h2>All pages passed visual validation</h2></div>'
+        html += '<div class="card all-pass"><h2>All pages and bookmarks passed visual validation</h2></div>'
 
     html += "\n</body>\n</html>"
     return html
