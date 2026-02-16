@@ -1,0 +1,51 @@
+{
+  "workspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+  "generatedAtUtc": "2026-02-16T09:09:12+00:00Z",
+  "reportCount": 4,
+  "reports": [
+    {
+      "Id": "009214c6-654c-42a7-aa8a-3289128d0e59",
+      "Name": "TransactionLog_Final",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/009214c6-654c-42a7-aa8a-3289128d0e59",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=009214c6-654c-42a7-aa8a-3289128d0e59&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "30a9e7de-ea77-4093-a51c-c7e98b111a04",
+      "DatasetName": "TransactionLog_Final",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": true,
+      "IsEffectiveIdentityRolesRequired": true
+    },
+    {
+      "Id": "b0df05af-1b3e-43b3-a187-efde0274fd3e",
+      "Name": "Corporate Spend",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/b0df05af-1b3e-43b3-a187-efde0274fd3e",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=b0df05af-1b3e-43b3-a187-efde0274fd3e&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "dceed2c9-7442-4427-aa26-4b4e390f8ed8",
+      "DatasetName": "Corporate Spend",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": false,
+      "IsEffectiveIdentityRolesRequired": false
+    },
+    {
+      "Id": "de6e672c-d43e-4e70-b8e5-caa55f03b957",
+      "Name": "Competitive Marketing Analysis",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/de6e672c-d43e-4e70-b8e5-caa55f03b957",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=de6e672c-d43e-4e70-b8e5-caa55f03b957&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "f915e4de-f663-4f20-ab26-62aec568ce68",
+      "DatasetName": "",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": false,
+      "IsEffectiveIdentityRolesRequired": false
+    },
+    {
+      "Id": "de769337-7416-4bd6-b4d7-fdc6f774f041",
+      "Name": "Store Sales",
+      "WebUrl": "https://app.powerbi.com/groups/9c8f98c0-5d79-4431-9deb-8368b1671461/reports/de769337-7416-4bd6-b4d7-fdc6f774f041",
+      "EmbedUrl": "https://app.powerbi.com/reportEmbed?reportId=de769337-7416-4bd6-b4d7-fdc6f774f041&groupId=9c8f98c0-5d79-4431-9deb-8368b1671461&w=2&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVNQQUlOLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZX19",
+      "DatasetId": "e9b84fc0-b3dc-4815-8b7b-2d5f07bb481d",
+      "DatasetName": "Store Sales",
+      "WorkspaceId": "9c8f98c0-5d79-4431-9deb-8368b1671461",
+      "IsEffectiveIdentityRequired": false,
+      "IsEffectiveIdentityRolesRequired": false
+    }
+  ]
+}

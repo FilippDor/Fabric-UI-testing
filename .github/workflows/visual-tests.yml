@@ -1,0 +1,70 @@
+name: Power BI Visual Regression Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  visual-tests:
+    runs-on: ubuntu-latest
+    environment: .env
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install package
+        run: pip install .
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Fetch report metadata from workspace
+        env:
+          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          SP_TENANT_ID: ${{ secrets.SP_TENANT_ID }}
+          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
+          WORKSPACE_ID: ${{ vars.WORKSPACE_ID }}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+        run: python -m helper_functions.get_workspace_reports_datasets
+
+      - name: Run visual regression tests
+        env:
+          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          SP_TENANT_ID: ${{ secrets.SP_TENANT_ID }}
+          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
+          WORKSPACE_ID: ${{ vars.WORKSPACE_ID }}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+          DEFAULT_RLS_ROLE: ${{ secrets.DEFAULT_RLS_ROLE }}
+        run: pytest --tb=short -v
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: tests/test-results/
+          retention-days: 30
+
+      - name: Deploy report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: tests/test-results
+          destination_dir: report
+          keep_files: false
